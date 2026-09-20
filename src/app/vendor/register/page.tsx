@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { CATEGORIES } from "@/lib/categories";
+import AiDescription from "./ai-description";
 
 async function registerVendor(formData: FormData) {
   "use server";
@@ -52,15 +53,18 @@ export default function RegisterPage() {
           "use server";
           await registerVendor(fd);
         }}
+        id="vendor-register-form"
         className="space-y-3"
       >
         <input
+          id="biz-name"
           name="businessName"
           required
           placeholder="Business name"
           className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-pink-500"
         />
         <select
+          id="biz-cat"
           name="category"
           required
           className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-pink-500"
@@ -78,12 +82,7 @@ export default function RegisterPage() {
           placeholder="City / region (e.g. Pretoria)"
           className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-pink-500"
         />
-        <textarea
-          name="description"
-          rows={4}
-          placeholder="Describe your services..."
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-pink-500"
-        />
+        <AiDescription />
         <button
           type="submit"
           className="w-full rounded-full bg-pink-600 px-6 py-3 font-medium text-white hover:bg-pink-700"

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCouple } from "@/lib/couple";
 import { prisma } from "@/lib/prisma";
 import { CATEGORIES } from "@/lib/categories";
+import AiAssistant from "./ai-assistant";
 
 export const dynamic = "force-dynamic";
 
@@ -136,6 +137,7 @@ export default async function DashboardPage() {
       </ul>
 
       <h2 className="mb-3 font-serif text-xl font-semibold">Find your vendors</h2>
+      <AiAssistant />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
         {CATEGORIES.map((cat) => (
           <Link
