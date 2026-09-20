@@ -68,13 +68,17 @@ model ServiceRegion {
 }
 
 model Couple {
-  id          String  @id @default(cuid())
-  userId      String  @unique
-  user        User    @relation(fields: [userId], references: [id])
-  weddingDate DateTime?
-  region      String?
-  budgetTotal Decimal?
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  user         User      @relation(fields: [userId], references: [id])
+  weddingDate  DateTime?
+  region       String?
+  budgetTotal  Decimal?
   partnerNames Json?
+  guests       Guest[]
+  budgetItems  BudgetItem[]
+  checklist    ChecklistItem[]
+  ideas        Idea[]
 }
 
 model Review {
@@ -181,4 +185,68 @@ model Payment {
   pfPaymentId    String?  @unique
   creditsGranted Int      @default(0)
   createdAt      DateTime @default(now())
+}
+
+// ---- Couple planning tools ----
+
+enum Event {
+  WEDDING
+  BRIDAL_SHOWER
+  BACHELORS
+}
+
+enum Rsvp {
+  PENDING
+  ATTENDING
+  DECLINED
+}
+
+model Guest {
+  id        String   @id @default(cuid())
+  coupleId  String
+  couple    Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  event     Event    @default(WEDDING)
+  name      String
+  phone     String?
+  email     String?
+  rsvp      Rsvp     @default(PENDING)
+  needsRoom Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([coupleId, event])
+}
+
+model BudgetItem {
+  id             String  @id @default(cuid())
+  coupleId       String
+  couple         Couple  @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  category       String
+  description    String
+  estimatedCents Int
+  actualCents    Int     @default(0)
+  paid           Boolean @default(false)
+
+  @@index([coupleId, category])
+}
+
+model ChecklistItem {
+  id        String  @id @default(cuid())
+  coupleId  String
+  couple    Couple  @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  monthsOut Int
+  title     String
+  done      Boolean @default(false)
+
+  @@index([coupleId, monthsOut])
+}
+
+model Idea {
+  id        String   @id @default(cuid())
+  coupleId  String
+  couple    Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  title     String
+  note      String?
+  imageUrl  String?
+  tags      String[]
+  createdAt DateTime @default(now())
 }

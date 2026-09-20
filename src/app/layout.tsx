@@ -14,7 +14,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-pink-600 align-middle" />
               Do
             </Link>
-            <nav className="flex items-center gap-4 text-sm">
+            <nav className="flex flex-wrap items-center gap-4 text-sm">
+              <Link href="/dashboard" className="hover:text-pink-600">
+                My Wedding
+              </Link>
               <Link href="/search" className="hover:text-pink-600">
                 Search
               </Link>
