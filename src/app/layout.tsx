@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BRAND } from "@/lib/brand";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -10,9 +11,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               href="/"
               className="flex items-center gap-1 font-serif text-2xl font-bold"
             >
-              Wed
+              {BRAND.name.replace(" ", "")}
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-pink-600 align-middle" />
-              Do
             </Link>
             <nav className="flex flex-wrap items-center gap-4 text-sm">
               <Link href="/dashboard" className="hover:text-pink-600">
@@ -35,8 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main className="flex-1">{children}</main>
         <footer className="border-t border-neutral-200 py-6 text-center text-sm text-neutral-500">
-          © {new Date().getFullYear()} Wed Do — Find wedding professionals in
-          South Africa
+          © {new Date().getFullYear()} {BRAND.name} — {BRAND.tagline}
         </footer>
       </body>
     </html>

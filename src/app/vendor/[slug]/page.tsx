@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
@@ -15,9 +16,70 @@ export default async function VendorPage({
   const { slug } = await params;
   const vendor = await prisma.vendor.findUnique({
     where: { slug },
-    include: { reviews: true },
+    include: { reviews: { orderBy: { createdAt: "desc" } } },
   });
   if (!vendor || vendor.status !== "APPROVED") notFound();
+
+  // Does the signed-in couple qualify to review (they own a lead this
+  // vendor unlocked)?
+  const jar = await cookies();
+  const coupleId = jar.get("weddo_couple")?.value;
+  let canReview = false;
+  let qualifyingLeadId: string | null = null;
+  if (coupleId) {
+    const qualifying = await prisma.lead.findFirst({
+      where: {
+        coupleId,
+        unlocks: { some: { vendorId: vendor.id } },
+      },
+    });
+    if (qualifying) {
+      const mine = await prisma.review.findUnique({
+        where: { leadId: qualifying.id },
+      });
+      if (!mine) {
+        canReview = true;
+        qualifyingLeadId = qualifying.id;
+      }
+    }
+  }
+
+  async function submitReview(formData: FormData) {
+    "use server";
+    const { prisma } = await import("@/lib/prisma");
+    const { cookies } = await import("next/headers");
+    const { redirect } = await import("next/navigation");
+    const jar = await cookies();
+    const coupleId = jar.get("weddo_couple")?.value;
+    const slug = String(formData.get("slug"));
+    const leadId = String(formData.get("leadId"));
+    const rating = Number(formData.get("rating"));
+    if (!coupleId || !leadId || !(rating >= 1 && rating <= 5)) return;
+    const lead = await prisma.lead.findFirst({
+      where: { id: leadId, coupleId, unlocks: { some: {} } },
+    });
+    if (!lead) return;
+    const vendor = await prisma.vendor.findUnique({
+      where: { slug },
+      select: { id: true, ratingAvg: true, ratingCount: true },
+    });
+    if (!vendor) return;
+    const already = await prisma.review.findUnique({
+      where: { leadId },
+    });
+    if (already) return;
+    await prisma.review.create({
+      data: { vendorId: vendor.id, leadId, rating },
+    });
+    const newCount = vendor.ratingCount + 1;
+    const newAvg =
+      (Number(vendor.ratingAvg) * vendor.ratingCount + rating) / newCount;
+    await prisma.vendor.update({
+      where: { id: vendor.id },
+      data: { ratingAvg: newAvg, ratingCount: newCount },
+    });
+    redirect(`/vendor/${slug}`);
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -70,6 +132,40 @@ export default async function VendorPage({
       >
         Request a quote
       </button>
+
+      {canReview && qualifyingLeadId && (
+        <form action={submitReview} className="mt-6 rounded-xl border border-neutral-200 p-4">
+          <input type="hidden" name="slug" value={slug} />
+          <input type="hidden" name="leadId" value={qualifyingLeadId} />
+          <p className="text-sm font-medium">Rate this vendor (1–5)</p>
+          <div className="mt-2 flex gap-2">
+            {[1, 2, 3, 4, 5].map((r) => (
+              <button
+                key={r}
+                name="rating"
+                value={r}
+                className="h-9 w-9 rounded-full border border-neutral-300 text-sm hover:bg-pink-100"
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </form>
+      )}
+
+      {vendor.reviews.length > 0 && (
+        <div className="mt-8">
+          <h2 className="mb-3 font-serif text-xl font-semibold">Reviews</h2>
+          <div className="space-y-2">
+            {vendor.reviews.map((r) => (
+              <div key={r.id} className="rounded-lg border border-neutral-200 px-3 py-2 text-sm">
+                <span className="font-medium text-pink-700">{r.rating}/5</span>
+                {r.comment && <p className="text-neutral-600">{r.comment}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

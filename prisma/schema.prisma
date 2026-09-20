@@ -53,6 +53,7 @@ model Vendor {
   leadSlots      LeadSlot[]
   leadUnlocks    LeadUnlock[]
   ledgerEntries  LedgerEntry[]
+  threads        MessageThread[]
 }
 
 model ServiceRegion {
@@ -79,6 +80,8 @@ model Couple {
   budgetItems  BudgetItem[]
   checklist    ChecklistItem[]
   ideas        Idea[]
+  threads      MessageThread[]
+  leads        Lead[]
 }
 
 model Review {
@@ -101,6 +104,8 @@ enum LeadStatus {
 
 model Lead {
   id            String     @id @default(cuid())
+  coupleId      String?
+  couple        Couple?    @relation(fields: [coupleId], references: [id])
   category      String
   eventDate     DateTime?
   region        String
@@ -115,6 +120,7 @@ model Lead {
   createdAt     DateTime   @default(now())
   slots         LeadSlot[]
   unlocks       LeadUnlock[]
+  threads       MessageThread[]
 }
 
 model LeadSlot {
@@ -185,6 +191,50 @@ model Payment {
   pfPaymentId    String?  @unique
   creditsGranted Int      @default(0)
   createdAt      DateTime @default(now())
+}
+
+// ---- Messaging (M4) ----
+
+model MessageThread {
+  id        String    @id @default(cuid())
+  leadId    String    @unique
+  lead      Lead      @relation(fields: [leadId], references: [id])
+  vendorId  String
+  vendor    Vendor    @relation(fields: [vendorId], references: [id])
+  coupleId  String?
+  couple    Couple?   @relation(fields: [coupleId], references: [id])
+  messages  Message[]
+  updatedAt DateTime  @updatedAt
+
+  @@index([vendorId, updatedAt])
+  @@index([coupleId, updatedAt])
+}
+
+model Message {
+  id         String        @id @default(cuid())
+  threadId   String
+  thread     MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  senderRole String // COUPLE | VENDOR
+  body       String
+  readAt     DateTime?
+  createdAt  DateTime      @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+// ---- Notification outbox (M4) ----
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  channel   String // EMAIL | SMS
+  template  String
+  payload   Json
+  status    String    @default("QUEUED") // QUEUED/SENT/FAILED
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, status])
 }
 
 // ---- Couple planning tools ----

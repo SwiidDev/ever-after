@@ -54,8 +54,24 @@ export default async function VendorLeadsPage({
       idempotencyKey: `unlock-${vid}-${leadId}`,
     });
     const { redirect } = await import("next/navigation");
-    if (result.ok) redirect("/vendor/leads");
-    else
+    if (result.ok) {
+      // Notify the couple (if the lead belongs to a signed-up couple)
+      const { notify, deliverQueued } = await import("@/lib/notify");
+      const { prisma } = await import("@/lib/prisma");
+      const lead = await prisma.lead.findUnique({
+        where: { id: leadId },
+        include: { couple: { select: { userId: true } }, unlocks: { include: { vendor: { select: { businessName: true } } } } },
+      });
+      const lastUnlock = lead?.unlocks[lead.unlocks.length - 1];
+      if (lead?.couple?.userId && lastUnlock)
+        await notify({
+          userId: lead.couple.userId,
+          template: "lead_unlocked",
+          payload: { vendorName: lastUnlock.vendor.businessName, leadId },
+        });
+      await deliverQueued();
+      redirect("/vendor/leads");
+    } else
       redirect(
         `/vendor/leads?msg=${encodeURIComponent(
           result.reason === "insufficient_credits"
@@ -150,6 +166,12 @@ export default async function VendorLeadsPage({
                   {lead.notes && (
                     <p className="mt-2 text-neutral-600">{lead.notes}</p>
                   )}
+                  <a
+                    href={`/messages/${lead.id}`}
+                    className="mt-2 inline-block rounded-full bg-neutral-900 px-4 py-1.5 text-xs font-medium text-white hover:bg-neutral-700"
+                  >
+                    Message the couple
+                  </a>
                 </div>
               ) : lead.status === "EXHAUSTED" ? (
                 <p className="mt-3 text-sm text-neutral-400">
