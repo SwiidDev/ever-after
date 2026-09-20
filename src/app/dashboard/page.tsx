@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { getCouple } from "@/lib/couple";
 import { prisma } from "@/lib/prisma";
 import { CATEGORIES } from "@/lib/categories";
+import { getCouple } from "@/lib/couple";
 import AiAssistant from "./ai-assistant";
 
 export const dynamic = "force-dynamic";
+
+const HERO = "https://images.unsplash.com/photo-1519741497674-611481863552?w=2400&q=80&auto=format&fit=crop";
 
 export default async function DashboardPage() {
   const couple = await getCouple();
@@ -45,6 +47,17 @@ export default async function DashboardPage() {
       ? 0
       : Math.round((doneCount / taskAgg._count._all) * 100);
 
+  const partners = Array.isArray(couple.partnerNames)
+    ? (couple.partnerNames as string[]).join(" & ")
+    : "Your wedding";
+  const dateLabel = couple.weddingDate
+    ? couple.weddingDate.toLocaleDateString("en-ZA", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "Set a date to start the countdown";
+
   async function savePlan(formData: FormData) {
     "use server";
     const { getCouple } = await import("@/lib/couple");
@@ -67,85 +80,113 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="font-serif text-3xl font-bold">Your Wedding Plan</h1>
-
-      <form
-        action={savePlan}
-        className="mt-4 flex flex-wrap items-end gap-2 rounded-xl border border-neutral-200 p-4 text-sm"
+      {/* HERO */}
+      <section
+        className="relative overflow-hidden rounded-3xl bg-cover bg-center p-6 text-white sm:p-10"
+        style={{ backgroundImage: `url("${HERO}")` }}
       >
-        <label className="flex flex-col gap-1">
-          Wedding date
-          <input
-            name="weddingDate"
-            type="date"
-            defaultValue={couple.weddingDate?.toISOString().slice(0, 10)}
-            className="rounded-lg border border-neutral-300 px-3 py-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          Budget (R)
-          <input
-            name="budgetTotal"
-            type="number"
-            min={0}
-            defaultValue={budget || ""}
-            placeholder="100000"
-            className="w-32 rounded-lg border border-neutral-300 px-3 py-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          Partner names
-          <input
-            name="partnerNames"
-            defaultValue={
-              Array.isArray(couple.partnerNames)
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-700/80 via-pink-600/60 to-black/40" />
+        <div className="relative">
+          <p className="text-xs uppercase tracking-wider text-white/80">
+            {dateLabel}
+          </p>
+          <h1 className="mt-1 font-serif text-3xl font-bold sm:text-4xl">
+            {partners}
+          </h1>
+          <p className="mt-4 inline-flex items-baseline gap-2">
+            <span className="font-serif text-7xl font-bold text-white drop-shadow">
+              {days == null ? "—" : days}
+            </span>
+            <span className="text-base text-white/90">
+              {days == null ? "days" : days === 1 ? "day to go" : "days to go"}
+            </span>
+          </p>
+          <form action={savePlan} className="mt-6 flex flex-wrap gap-2 text-xs">
+            <input
+              name="weddingDate"
+              type="date"
+              defaultValue={couple.weddingDate?.toISOString().slice(0, 10)}
+              className="rounded-lg border border-white/30 bg-white/10 px-2 py-1.5 text-white placeholder-white/60 backdrop-blur"
+            />
+            <input
+              name="partnerNames"
+              defaultValue={Array.isArray(couple.partnerNames)
                 ? (couple.partnerNames as string[]).join(" & ")
-                : ""
-            }
-            placeholder="Jane & John"
-            className="rounded-lg border border-neutral-300 px-3 py-2"
-          />
-        </label>
-        <button className="rounded-full bg-pink-600 px-5 py-2 font-medium text-white hover:bg-pink-700">
-          Save
-        </button>
-      </form>
+                : ""}
+              placeholder="Jane & John"
+              className="rounded-lg border border-white/30 bg-white/10 px-2 py-1.5 text-white placeholder-white/60 backdrop-blur"
+            />
+            <input
+              name="budgetTotal"
+              type="number"
+              min={0}
+              defaultValue={budget || ""}
+              placeholder="Budget R"
+              className="w-32 rounded-lg border border-white/30 bg-white/10 px-2 py-1.5 text-white placeholder-white/60 backdrop-blur"
+            />
+            <button className="rounded-full bg-white px-4 py-1.5 font-medium text-pink-700 hover:bg-pink-50">
+              Save
+            </button>
+          </form>
+        </div>
+      </section>
 
+      {/* STATS */}
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Days to go" value={days == null ? "—" : String(days)} accent />
-        <Stat label="Guests invited" value={String(guestCount)} sub={`${attending} attending`} />
+        <Stat
+          label="Guests invited"
+          value={String(guestCount)}
+          sub={`${attending} attending`}
+        />
         <Stat
           label="Budget estimated"
           value={`R ${estimated.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}`}
-          sub={budget ? `of R ${budget.toLocaleString("en-ZA")}` : undefined}
+          sub={budget ? `of R ${budget.toLocaleString("en-ZA")}` : "set a budget"}
         />
         <Stat label="Checklist" value={`${pct}%`} sub={`${doneCount}/${taskAgg._count._all} done`} />
+        <Stat
+          label="Vendors"
+          value="0"
+          sub="request quotes below"
+        />
       </div>
 
-      <h2 className="mb-3 mt-8 font-serif text-xl font-semibold">
-        Next up on your checklist
+      {/* CHECKLIST PREVIEW */}
+      <h2 className="mb-3 mt-10 font-serif text-xl font-semibold">
+        Up next
       </h2>
-      <ul className="mb-8 space-y-1 text-sm">
+      <div className="mb-10 space-y-2">
         {tasks.map((t) => (
-          <li key={t.id} className="rounded-lg border border-neutral-200 px-3 py-2">
-            {t.title} <span className="text-neutral-400">· {t.monthsOut} months out</span>
-          </li>
+          <Link
+            key={t.id}
+            href="/checklist"
+            className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-3 transition hover:border-pink-300"
+          >
+            <span className="text-sm">{t.title}</span>
+            <span className="text-xs text-neutral-400">
+              {t.monthsOut} months out →
+            </span>
+          </Link>
         ))}
         {tasks.length === 0 && (
-          <li className="text-neutral-500">All done — enjoy the wedding!</li>
+          <p className="text-sm text-neutral-500">All done — enjoy the wedding!</p>
         )}
-      </ul>
+      </div>
 
-      <h2 className="mb-3 font-serif text-xl font-semibold">Find your vendors</h2>
+      {/* VENDORS */}
+      <h2 className="mb-3 font-serif text-xl font-semibold">Find vendors</h2>
       <AiAssistant />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
         {CATEGORIES.map((cat) => (
           <Link
             key={cat}
             href={`/quotes/${encodeURIComponent(cat)}`}
-            className="rounded-xl border border-neutral-200 p-4 text-center text-sm font-medium transition hover:border-pink-400 hover:text-pink-600"
+            className="group flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-3 text-sm transition hover:border-pink-400 hover:bg-pink-50"
           >
-            {cat}
+            <span className="font-medium group-hover:text-pink-700">{cat}</span>
+            <span className="text-pink-600 opacity-0 transition group-hover:opacity-100">
+              →
+            </span>
           </Link>
         ))}
       </div>
@@ -157,23 +198,15 @@ function Stat({
   label,
   value,
   sub,
-  accent,
 }: {
   label: string;
   value: string;
   sub?: string;
-  accent?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-xl border p-4 ${
-        accent ? "border-pink-300 bg-pink-50" : "border-neutral-200"
-      }`}
-    >
+    <div className="rounded-xl border border-neutral-200 bg-white p-4">
       <p className="text-xs uppercase tracking-wide text-neutral-500">{label}</p>
-      <p className={`font-serif text-2xl font-bold ${accent ? "text-pink-700" : ""}`}>
-        {value}
-      </p>
+      <p className="font-serif text-2xl font-bold">{value}</p>
       {sub && <p className="text-xs text-neutral-500">{sub}</p>}
     </div>
   );
