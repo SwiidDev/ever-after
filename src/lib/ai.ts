@@ -10,7 +10,10 @@
 export const aiConfig = {
   baseUrl: process.env.AI_BASE_URL ?? "",
   apiKey: process.env.AI_API_KEY ?? "",
-  model: process.env.AI_MODEL ?? "",
+  // Nous-hosted free model (Alibaba-backed, no-cost tier on Nous inference).
+  // Override with AI_MODEL env var. To probe alternatives:
+  //   bun scripts/probe-models.ts qwen/qwen3.8-flash nous/hermes-2-mistral
+  model: process.env.AI_MODEL ?? "qwen/qwen3.8-flash",
 };
 
 export function aiEnabled(): boolean {
