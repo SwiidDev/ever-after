@@ -1,4 +1,4 @@
-import { getSession } from "@lib/session";
+import { getSession } from "@/lib/session";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { unlockLead, unlockCost, grantCredits } from "@/lib/credits";
