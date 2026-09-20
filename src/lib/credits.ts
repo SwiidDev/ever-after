@@ -159,6 +159,11 @@ async function unlockLeadOnce(opts: {
           ledgerEntryId: entry.id,
         },
       });
+      // Mark this slot as UNLOCKED so redistribution won't touch it
+      await tx.leadSlot.updateMany({
+        where: { leadId: opts.leadId, vendorId: opts.vendorId },
+        data: { status: "UNLOCKED", notified: true },
+      });
       const newCount = lead.unlocks.length + 1;
       await tx.lead.update({
         where: { id: opts.leadId },

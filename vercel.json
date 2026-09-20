@@ -4,6 +4,9 @@
   "installCommand": "bun install",
   "outputDirectory": ".next",
   "regions": ["fra1"],
+  "crons": [
+    { "path": "/api/cron/expire-slots", "schedule": "*/15 * * * *" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

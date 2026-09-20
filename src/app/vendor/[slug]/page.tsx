@@ -2,6 +2,7 @@ import { getSession } from "@/lib/session";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { BRAND } from "@/lib/brand";
+import { vendorBadge } from "@/lib/vendor-badge";
 
 const HERO_BY_CATEGORY: Record<string, string> = {
   Venues: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1800&q=80&auto=format&fit=crop",
@@ -121,6 +122,7 @@ export default async function VendorPage({
   };
 
   const hero = HERO_BY_CATEGORY[vendor.category] ?? HERO_BY_CATEGORY.Venues;
+  const badge = await vendorBadge(vendor.id);
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <script
@@ -147,6 +149,14 @@ export default async function VendorPage({
             ({vendor.ratingCount})
           </span>
         </span>
+        {badge.quickResponder && badge.responseCount >= 3 && (
+          <span
+            title={`Responds in ~${badge.averageResponseMinutes}m (last ${badge.responseCount} leads)`}
+            className="absolute right-6 bottom-6 inline-flex items-center gap-1 rounded-full bg-amber-400/95 px-3 py-1.5 text-sm font-bold text-amber-900 shadow backdrop-blur"
+          >
+            ⚡ Quick responder
+          </span>
+        )}
       </div>
       {vendor.description && (
         <p className="mt-6 leading-relaxed text-neutral-700">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { CATEGORIES, haversineKm } from "@/lib/categories";
+import { vendorBadge } from "@/lib/vendor-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,13 @@ export default async function SearchPage({
             radiusKm,
       )
     : vendors;
+
+  // Quick-responder badge per vendor (computed via avg unlock time)
+  const badges = Object.fromEntries(
+    await Promise.all(
+      filtered.map(async (v) => [v.id, await vendorBadge(v.id)] as const),
+    ),
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -146,6 +154,14 @@ export default async function SearchPage({
                 <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-medium text-neutral-700 backdrop-blur">
                   {v.category}
                 </span>
+                {badges[v.id]?.quickResponder && badges[v.id].responseCount >= 3 && (
+                  <span
+                    title={`Responds in ~${badges[v.id].averageResponseMinutes}m (last ${badges[v.id].responseCount} leads)`}
+                    className="absolute left-3 bottom-3 inline-flex items-center gap-1 rounded-full bg-amber-400/95 px-2 py-1 text-xs font-bold text-amber-900 shadow backdrop-blur"
+                  >
+                    ⚡ Quick responder
+                  </span>
+                )}
               </div>
               <div className="p-4">
                 <h2 className="font-serif text-lg font-semibold group-hover:text-pink-700">
@@ -160,6 +176,8 @@ export default async function SearchPage({
                 <div className="mt-3 flex items-center justify-between text-xs">
                   <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-neutral-500">
                     {v.ratingCount} reviews
+                    {badges[v.id]?.averageResponseMinutes != null &&
+                      ` · ~${badges[v.id].averageResponseMinutes}m avg reply`}
                   </span>
                   <span className="text-pink-600 group-hover:underline">
                     View profile →

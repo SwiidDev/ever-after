@@ -117,21 +117,31 @@ model Lead {
   notes         String?
   status        LeadStatus @default(DISTRIBUTED)
   maxSlots      Int        @default(5)
+  fulfilledAt   DateTime?
   createdAt     DateTime   @default(now())
   slots         LeadSlot[]
   unlocks       LeadUnlock[]
   threads       MessageThread[]
 }
 
+enum LeadSlotStatus {
+  PENDING
+  UNLOCKED
+  EXPIRED
+}
+
 model LeadSlot {
-  id        String    @id @default(cuid())
+  id        String          @id @default(cuid())
   leadId    String
-  lead      Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  lead      Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
   vendorId  String
-  vendor    Vendor    @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendor    Vendor          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   position  Int
-  notified  Boolean   @default(false)
-  createdAt DateTime  @default(now())
+  notified  Boolean         @default(false)
+  notifiedAt DateTime?
+  expiredAt DateTime?
+  status    LeadSlotStatus  @default(PENDING)
+  createdAt DateTime        @default(now())
 
   @@unique([leadId, vendorId])
 }

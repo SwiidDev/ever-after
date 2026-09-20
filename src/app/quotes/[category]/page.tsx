@@ -62,7 +62,14 @@ export default async function RequestQuotePage({
       take: 5,
     });
     await prisma.leadSlot.createMany({
-      data: candidates.map((v, i) => ({ leadId: lead.id, vendorId: v.id, position: i + 1 })),
+      data: candidates.map((v, i) => ({
+        leadId: lead.id,
+        vendorId: v.id,
+        position: i + 1,
+        status: "PENDING" as const,
+        notified: true,
+        notifiedAt: new Date(),
+      })),
     });
 
     const { redirect } = await import("next/navigation");
