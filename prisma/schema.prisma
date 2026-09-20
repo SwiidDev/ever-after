@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  COUPLE
+  VENDOR
+  ADMIN
+}
+
+enum VendorStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  phone     String?
+  role      Role     @default(COUPLE)
+  vendor    Vendor?
+  couple    Couple?
+  createdAt DateTime @default(now())
+}
+
+model Vendor {
+  id             String       @id @default(cuid())
+  userId         String       @unique
+  user           User         @relation(fields: [userId], references: [id])
+  businessName   String
+  slug           String       @unique
+  category       String
+  description    String?
+  logoUrl        String?
+  galleryUrls    String[]
+  baseRegion     String
+  baseLat        Decimal?
+  baseLng        Decimal?
+  status         VendorStatus @default(PENDING)
+  ratingAvg      Decimal      @default(0) @db.Decimal(3, 2)
+  ratingCount    Int          @default(0)
+  creditBalance  Int          @default(0)
+  approvedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  serviceRegions ServiceRegion[]
+  reviews        Review[]
+}
+
+model ServiceRegion {
+  id        String @id @default(cuid())
+  vendorId  String
+  vendor    Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  regionCode String
+  radiusKm  Int
+  lat       Decimal
+  lng       Decimal
+
+  @@unique([vendorId, regionCode])
+}
+
+model Couple {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id])
+  weddingDate DateTime?
+  region      String?
+  budgetTotal Decimal?
+  partnerNames Json?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  vendorId  String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  leadId    String   @unique
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
