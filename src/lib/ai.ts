@@ -33,16 +33,20 @@ export async function aiChat(
     body: JSON.stringify({
       model: aiConfig.model,
       messages,
-      max_tokens: opts.maxTokens ?? 500,
+      max_tokens: opts.maxTokens ?? 1200,
       temperature: opts.temperature ?? 0.7,
     }),
     signal: AbortSignal.timeout(30_000),
   });
   if (!res.ok) return null;
   const json = (await res.json()) as {
-    choices?: { message?: { content?: string } }[];
+    choices?: {
+      message?: { content?: string | null; reasoning?: string | null };
+    }[];
   };
-  return json.choices?.[0]?.message?.content ?? null;
+  const msg = json.choices?.[0]?.message;
+  // Reasoning models (e.g. qwen3-flash) may put output in `reasoning`
+  return msg?.content ?? msg?.reasoning ?? null;
 }
 
 /** Wedding-planning assistant system prompt. */
