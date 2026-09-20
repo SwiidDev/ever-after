@@ -13,11 +13,11 @@ export default function CookieBanner() {
   if (!open) return null;
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-3xl p-4">
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-lg">
-        <p className="flex-1 text-sm text-neutral-700">
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-[#111] p-4 text-neutral-200 shadow-2xl">
+        <p className="flex-1 text-sm">
           {BRAND.name} uses essential cookies to keep you signed in and
           remember your preferences. See our{" "}
-          <Link href="/privacy" className="text-pink-600 underline">
+          <Link href="/privacy" className="text-[var(--gold)] underline">
             privacy notice
           </Link>
           .
@@ -27,7 +27,7 @@ export default function CookieBanner() {
             localStorage.setItem("ea-cookies", "ok");
             setOpen(false);
           }}
-          className="rounded-full bg-pink-600 px-4 py-2 text-sm font-medium text-white hover:bg-pink-700"
+          className="rounded-full bg-[var(--gold)] px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-black hover:bg-[var(--gold-soft)]"
         >
           Got it
         </button>

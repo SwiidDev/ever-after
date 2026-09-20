@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Pricing — Credit packs for vendors" };
 
 const INCLUDED = [
-  "Wed Do verified badge",
+  "Ever After verified badge",
   "Profile listed in search",
   "AI-generated description help",
   "Up to 5-vendor lead distribution",
@@ -19,55 +19,59 @@ export default async function PricingPage() {
 
   return (
     <div>
-      <section className="bg-gradient-to-b from-pink-50 to-white px-4 py-16 text-center">
-        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-pink-600">
-          For Vendors
-        </p>
-        <h1 className="font-serif text-4xl font-bold sm:text-5xl">
-          Pay only for the introductions that matter
+      <section className="bg-[var(--background)] px-6 py-24 text-center">
+        <p className="eyebrow">For Vendors</p>
+        <h1 className="mt-3 font-serif text-4xl font-medium sm:text-6xl">
+          Pay only for the introductions that matter.
         </h1>
-        <p className="mx-auto mt-3 max-w-xl text-neutral-600">
-          Buy credits, unlock lead details, contact qualified couples.
-          No subscription lock, no commission on bookings.
+        <div className="hairline mx-auto mt-8 w-32" />
+        <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-neutral-400">
+          Buy credits, unlock lead details, contact qualified couples. No
+          subscription lock, no commission on bookings.
         </p>
       </section>
 
-      <section className="mx-auto -mt-4 max-w-5xl px-4 pb-12">
-        <div className="grid gap-4 sm:grid-cols-3">
+      <section className="mx-auto max-w-6xl px-6 pb-20">
+        <div className="grid gap-6 sm:grid-cols-3">
           {bundles.map((b, idx) => {
             const popular = idx === 1;
             return (
               <div
                 key={b.id}
-                className={`relative rounded-2xl border bg-white p-6 shadow-sm ${
-                  popular ? "border-pink-400 ring-2 ring-pink-200" : "border-neutral-200"
+                className={`relative rounded-2xl border p-7 ${
+                  popular
+                    ? "border-[var(--gold)] bg-[var(--bone)] shadow-[0_0_40px_rgba(197,160,89,0.15)]"
+                    : "surface"
                 }`}
               >
                 {popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-pink-600 px-3 py-1 text-xs font-medium text-white">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--gold)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-black">
                     Most popular
                   </span>
                 )}
-                <h2 className="font-serif text-xl font-semibold">{b.name}</h2>
-                <p className="mt-1 text-3xl font-bold text-pink-700">
+                <p className="eyebrow">{b.name}</p>
+                <p className="mt-3 font-serif text-5xl text-white">
                   R{(b.priceCents / 100).toFixed(0)}
-                  <span className="text-base font-normal text-neutral-500"> / pack</span>
+                  <span className="ml-1 text-sm font-sans text-neutral-500">
+                    / pack
+                  </span>
                 </p>
-                <p className="mt-1 text-sm text-neutral-600">
+                <p className="mt-1 text-sm text-neutral-400">
                   {b.credits} credits ·{" "}
                   R{(b.priceCents / b.credits / 100).toFixed(2)} / credit
                 </p>
-                <ul className="mt-4 space-y-1.5 text-sm">
+                <div className="hairline my-5" />
+                <ul className="space-y-2 text-sm text-neutral-300">
                   <li>· {Math.round(b.credits / 4)} venue leads</li>
                   <li>· or {Math.round(b.credits / 10)} photography leads</li>
                   <li>· credits valid for 12 months</li>
                 </ul>
                 <Link
                   href="/vendor/register"
-                  className={`mt-6 block rounded-full px-4 py-2.5 text-center text-sm font-medium ${
+                  className={`mt-7 block rounded-full px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.22em] transition ${
                     popular
-                      ? "bg-pink-600 text-white hover:bg-pink-700"
-                      : "border border-pink-600 text-pink-700 hover:bg-pink-50"
+                      ? "bg-[var(--gold)] text-black hover:bg-[var(--gold-soft)]"
+                      : "border border-[var(--gold)]/60 text-[var(--gold)] hover:bg-[var(--gold)]/10"
                   }`}
                 >
                   {popular ? "Get started" : "Choose pack"}
@@ -77,17 +81,15 @@ export default async function PricingPage() {
           })}
         </div>
 
-        <div className="mx-auto mt-12 max-w-3xl rounded-2xl bg-white p-6 shadow-sm">
-          <h3 className="font-serif text-xl font-semibold">
-            Every pack includes
-          </h3>
-          <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="mx-auto mt-14 max-w-3xl rounded-2xl surface p-7">
+          <p className="eyebrow">Every pack includes</p>
+          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {INCLUDED.map((i) => (
               <li
                 key={i}
-                className="flex items-start gap-2 text-sm text-neutral-700"
+                className="flex items-start gap-2 text-sm text-neutral-300"
               >
-                <span className="text-pink-600">✓</span>
+                <span className="text-[var(--gold)]">✓</span>
                 {i}
               </li>
             ))}
@@ -95,11 +97,9 @@ export default async function PricingPage() {
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
-          <div className="rounded-2xl border border-neutral-200 p-6">
-            <h3 className="font-serif text-lg font-semibold">
-              Lead pricing per category
-            </h3>
-            <table className="mt-3 w-full text-sm">
+          <div className="surface rounded-2xl p-7">
+            <p className="eyebrow">Lead pricing per category</p>
+            <table className="mt-4 w-full text-sm">
               <tbody>
                 {[
                   ["Venues", 40, "R 1 200"],
@@ -109,22 +109,22 @@ export default async function PricingPage() {
                   ["Dresses & Suits", 15, "R 450"],
                   ["Hair & Makeup", 10, "R 300"],
                 ].map(([cat, credits, price]) => (
-                  <tr key={cat} className="border-b border-neutral-100">
-                    <td className="py-1.5 text-neutral-700">{cat}</td>
-                    <td className="py-1.5 text-center text-neutral-500">
+                  <tr key={cat} className="border-b border-white/5">
+                    <td className="py-2 text-neutral-300">{cat}</td>
+                    <td className="py-2 text-center text-neutral-500">
                       {credits} credits
                     </td>
-                    <td className="py-1.5 text-right font-medium">{price}</td>
+                    <td className="py-2 text-right font-medium text-[var(--gold)]">
+                      {price}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <div className="rounded-2xl bg-pink-50 p-6">
-            <h3 className="font-serif text-lg font-semibold">
-              How one couple pays back many times
-            </h3>
-            <p className="mt-2 text-sm text-neutral-700">
+          <div className="rounded-2xl border border-[var(--gold)]/30 bg-[var(--bone)] p-7">
+            <p className="eyebrow">The math</p>
+            <p className="mt-3 text-sm leading-relaxed text-neutral-300">
               Couples don't just request one vendor — they usually need 6–9
               (venue, catering, photo, flowers, dress, hair, honeymoon). A
               single acquired couple is worth the cost of every credit in
@@ -132,7 +132,7 @@ export default async function PricingPage() {
             </p>
             <Link
               href="/vendor/register"
-              className="mt-4 inline-block rounded-full bg-pink-600 px-5 py-2 text-sm font-medium text-white hover:bg-pink-700"
+              className="mt-5 inline-block rounded-full border border-[var(--gold)]/60 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)] hover:bg-[var(--gold)]/10"
             >
               List your business →
             </Link>

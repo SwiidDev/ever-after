@@ -5,9 +5,12 @@ import { BRAND } from "@/lib/brand";
 export const dynamic = "force-dynamic";
 
 const HERO =
-  "https://images.unsplash.com/photo-1519741497674-611481863552?w=2400&q=80&auto=format&fit=crop";
+  "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=2400&q=80&auto=format&fit=crop";
 
-const CATEGORY_PHOTOS: Record<string, string> = {
+const STORY_PORTRAIT =
+  "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1400&q=80&auto=format&fit=crop";
+
+const CATEGORY_PHOTO: Record<string, string> = {
   Venues: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&q=80&auto=format&fit=crop",
   "Catering & Bar":
     "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=900&q=80&auto=format&fit=crop",
@@ -19,216 +22,258 @@ const CATEGORY_PHOTOS: Record<string, string> = {
     "https://images.unsplash.com/photo-1594552072238-b8a33785b261?w=900&q=80&auto=format&fit=crop",
   "Hair & Makeup":
     "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=900&q=80&auto=format&fit=crop",
+  "Dance Lessons":
+    "https://images.unsplash.com/photo-1535525153412-5a42439a210d?w=900&q=80&auto=format&fit=crop",
+  "Health & Beauty":
+    "https://images.unsplash.com/photo-1530021232320-687d8e3dba54?w=900&q=80&auto=format&fit=crop",
   Honeymoon:
     "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=900&q=80&auto=format&fit=crop",
 };
 
 const TESTIMONIALS = [
   {
-    name: "Jayne",
-    city: "Pretoria",
-    body: "I had 4 replies within 30 minutes and my venue was booked that week. Genuinely brilliant.",
+    name: "Jayne & Dean",
+    location: "Pretoria",
+    body: "I had four replies within 30 minutes and my venue was booked that week. Ever After made the start of planning feel easy.",
   },
   {
-    name: "Nathalie",
-    city: "Johannesburg",
-    body: "Posted a quote request on a Sunday, had 5 contacts by Monday morning. So much easier than chasing vendors one by one.",
+    name: "Nathalie & Pieter",
+    location: "Johannesburg",
+    body: "Posted a quote request on a Sunday, had five contacts by Monday morning. So much easier than chasing vendors one by one.",
   },
   {
-    name: "Morne",
-    city: "Stellenbosch",
-    body: "Got real vendor options, not just random Google results — and the budget tracker kept us honest.",
+    name: "Morne & Sean",
+    location: "Stellenbosch",
+    body: "Real vendor options, not just random Google results — and the budget tracker kept us honest.",
   },
 ];
 
 export default function Home() {
   return (
     <div>
-      {/* HERO with real wedding photo */}
-      <section
-        className="relative isolate overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: `url("${HERO}")` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-white" />
-        <div className="relative mx-auto max-w-5xl px-4 pb-28 pt-24 text-center text-white">
-          <p className="mb-3 inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-medium uppercase tracking-wider backdrop-blur">
-            Made for South African couples
-          </p>
-          <h1 className="mx-auto max-w-3xl font-serif text-4xl font-bold drop-shadow sm:text-6xl">
-            Find the best <span className="text-pink-300">wedding</span>{" "}
-            professionals in South Africa
+      {/* HERO — full-bleed B&W photo with overlay */}
+      <section className="relative isolate min-h-[88vh] overflow-hidden">
+        <img
+          src={HERO}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ filter: "grayscale(1) contrast(1.05) brightness(0.78)" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/80" />
+        <div className="relative mx-auto flex min-h-[88vh] max-w-5xl flex-col items-center justify-center px-6 text-center">
+          <p className="eyebrow">Wedding planning & procurement</p>
+          <h1 className="mt-5 font-serif text-6xl font-medium leading-[1.05] text-white drop-shadow sm:text-8xl">
+            Timeless Stories.
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-white/90 sm:text-lg">
-            Venues, caterers, photographers and more — free quotes from
-            vetted wedding pros, in minutes.
+          <p className="mt-2 font-serif text-5xl italic text-[var(--gold)] sm:text-7xl">
+            True Emotions.
           </p>
-          <form
-            action="/search"
-            className="mx-auto mt-8 flex max-w-xl overflow-hidden rounded-full bg-white p-1 shadow-lg"
-          >
-            <input
-              name="q"
-              placeholder="What are you looking for..."
-              className="w-full px-5 py-3 text-sm text-neutral-900 outline-none"
-            />
-            <input
-              name="loc"
-              defaultValue="Pretoria"
-              className="w-40 border-l border-neutral-200 px-3 text-sm text-neutral-900 outline-none"
-            />
-            <button
-              type="submit"
-              className="rounded-full bg-pink-600 px-6 py-3 text-sm font-medium text-white hover:bg-pink-700"
-            >
-              Search
-            </button>
-          </form>
-          <p className="mt-3 text-xs text-white/80">
-            Free for couples · No commission · Up to 5 quotes per request
+          <div className="hairline mx-auto mt-10 w-32" />
+          <p className="mt-6 max-w-xl text-sm leading-relaxed text-white/80">
+            A South African marketplace for couples — and the small studios,
+            caterers and photographers who make the day unforgettable.
           </p>
-        </div>
-      </section>
-
-      {/* TRUST STRIP */}
-      <section className="border-y border-neutral-200 bg-neutral-50">
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 px-4 py-6 text-center text-sm text-neutral-700 sm:grid-cols-4">
-          <Stat value="9" label="Wedding categories" />
-          <Stat value="14" label="Vetted SA vendors" />
-          <Stat value="Free" label="Always for couples" />
-          <Stat value="4.5★" label="Average rating" />
-        </div>
-      </section>
-
-      {/* CATEGORIES WITH PHOTOS */}
-      <section className="mx-auto max-w-6xl px-4 py-16">
-        <h2 className="mb-3 font-serif text-3xl font-semibold">
-          One marketplace, every wedding service
-        </h2>
-        <p className="mb-8 max-w-2xl text-neutral-600">
-          Browse by what you need most — we share your brief with up to 5
-          matched pros.
-        </p>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {CATEGORIES.slice(0, 6).map((cat) => (
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
-              key={cat}
-              href={`/search?category=${encodeURIComponent(cat)}`}
-              className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-cover bg-center bg-no-repeat shadow-sm transition hover:shadow-lg"
-              style={{ backgroundImage: `url("${CATEGORY_PHOTOS[cat] ?? HERO}")` }}
+              href="/search"
+              className="rounded-full bg-[var(--gold)] px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-black hover:bg-[var(--gold-soft)]"
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent transition group-hover:via-black/30" />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <p className="font-serif text-xl font-semibold text-white">
-                  {cat}
-                </p>
-                <p className="mt-0.5 text-xs text-white/80">
-                  Browse {cat.toLowerCase()} →
-                </p>
-              </div>
+              View portfolio →
             </Link>
-          ))}
+            <Link
+              href="/vendor/register"
+              className="rounded-full border border-[var(--gold)]/60 px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[var(--gold)] hover:bg-[var(--gold)]/10"
+            >
+              Join as vendor
+            </Link>
+          </div>
         </div>
-        <div className="mt-6 flex justify-center">
-          <Link
-            href="/search"
-            className="rounded-full border border-neutral-300 px-5 py-2 text-sm text-neutral-700 hover:border-pink-400 hover:text-pink-600"
-          >
-            See all categories →
-          </Link>
+      </section>
+
+      {/* OUR STORY — split image + text + stats */}
+      <section className="bg-[var(--background)] py-28">
+        <div className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-[1fr_1.1fr]">
+          <div className="relative">
+            <div className="aspect-[4/5] overflow-hidden rounded-2xl">
+              <img
+                src={STORY_PORTRAIT}
+                alt="A South African wedding venue at golden hour"
+                className="h-full w-full object-cover"
+                style={{ filter: "grayscale(0.4) contrast(1.05)" }}
+              />
+            </div>
+            <div className="absolute -bottom-6 left-4 surface rounded-md px-5 py-3 shadow-xl">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--gold-soft)]">Built in</p>
+              <p className="font-serif text-lg text-white">South Africa · 2026</p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center">
+            <p className="eyebrow">The Studio</p>
+            <h2 className="mt-3 font-serif text-4xl font-medium leading-tight text-white sm:text-5xl">
+              Artisans of light, motion and timeless love.
+            </h2>
+            <p className="mt-6 text-base leading-relaxed text-neutral-300">
+              Ever After is the front door couples walk through to find the
+              people who quietly make the day feel like the only one that
+              mattered. We curate South Africa's finest wedding
+              professionals — venues, photographers, ateliers, caterers,
+              florists — and bring them to you in a single, calm interface.
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-neutral-400">
+              Free for couples, forever. We make our living from the vendors
+              who pay to receive your brief — never from your pocket.
+            </p>
+
+            <div className="mt-10 grid grid-cols-3 gap-4 border-t border-white/5 pt-8">
+              <Stat value="9+" label="Categories" />
+              <Stat value="14+" label="Vetted vendors" />
+              <Stat value="4.5★" label="Avg rating" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section className="bg-black py-28">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">The Collection</p>
+            <h2 className="mt-3 font-serif text-4xl font-medium sm:text-5xl">
+              One studio, every wedding service.
+            </h2>
+            <p className="mt-4 text-sm text-neutral-400">
+              Curated categories covering the moments worth remembering.
+              Tap a tile to see the matched pros in your area.
+            </p>
+          </div>
+          <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {CATEGORIES.slice(0, 6).map((cat) => (
+              <Link
+                key={cat}
+                href={`/search?category=${encodeURIComponent(cat)}`}
+                className="group relative aspect-[4/3] overflow-hidden rounded-2xl"
+              >
+                <img
+                  src={CATEGORY_PHOTO[cat] ?? STORY_PORTRAIT}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  style={{ filter: "grayscale(0.6) brightness(0.65)" }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <p className="font-serif text-2xl font-medium text-white">
+                    {cat}
+                  </p>
+                  <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[var(--gold)]">
+                    Browse →
+                  </p>
+                </div>
+                <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/5 transition group-hover:ring-[var(--gold)]/40" />
+              </Link>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/search"
+              className="rounded-full border border-[var(--gold)]/60 px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[var(--gold)] hover:bg-[var(--gold)]/10"
+            >
+              See all categories →
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="bg-pink-50">
-        <div className="mx-auto max-w-5xl px-4 py-16">
-          <h2 className="mb-10 text-center font-serif text-3xl font-semibold">
-            How {BRAND.name} works
-          </h2>
-          <div className="grid gap-8 sm:grid-cols-3">
-            <Step
-              n="1"
-              title="Tell us what you need"
-              body="Pick a category, share a few details, and we'll match you with up to 5 local pros."
-            />
-            <Step
-              n="2"
-              title="Compare quotes"
-              body="Pros reach out with quotes and ideas. No spam, no obligation — you stay in control."
-            />
-            <Step
-              n="3"
-              title="Book & plan"
-              body="Use our free wedding tools — guest list, budget, checklist — to stay on top of everything."
-            />
+      <section className="bg-[var(--background)] py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="text-center">
+            <p className="eyebrow">The Process</p>
+            <h2 className="mt-3 font-serif text-4xl font-medium sm:text-5xl">
+              How {BRAND.name} works.
+            </h2>
+          </div>
+          <div className="mt-16 grid gap-12 sm:grid-cols-3">
+            {[
+              { n: "01", title: "Tell us", body: "Pick a category, share a few details about the day you want." },
+              { n: "02", title: "Compare", body: "Up to 5 shortlisted pros contact you with quotes and ideas." },
+              { n: "03", title: "Book & plan", body: "Use our free planning tools — guest list, budget, checklist." },
+            ].map((s) => (
+              <div key={s.n} className="text-center">
+                <p className="font-serif text-5xl text-[var(--gold)]">{s.n}</p>
+                <p className="mt-3 font-serif text-2xl text-white">{s.title}</p>
+                <div className="hairline mx-auto my-4 w-12" />
+                <p className="text-sm text-neutral-400">{s.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="mx-auto max-w-5xl px-4 py-16">
-        <h2 className="mb-8 text-center font-serif text-3xl font-semibold">
-          Couples love {BRAND.name}
-        </h2>
-        <div className="grid gap-6 sm:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <figure
-              key={t.name}
-              className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm"
-            >
-              <blockquote className="text-sm leading-relaxed text-neutral-700">
-                “{t.body}”
-              </blockquote>
-              <figcaption className="mt-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-600 text-sm font-bold text-white">
-                  {t.name[0]}
+      <section className="bg-black py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="text-center">
+            <p className="eyebrow">Love stories</p>
+            <h2 className="mt-3 font-serif text-4xl font-medium sm:text-5xl">
+              What our couples say.
+            </h2>
+          </div>
+          <div className="mt-14 grid gap-6 sm:grid-cols-3">
+            {TESTIMONIALS.map((t) => (
+              <figure
+                key={t.name}
+                className="surface rounded-2xl p-7 transition hover:border-[var(--gold)]/40"
+              >
+                <div className="flex gap-1 text-[var(--gold)]" aria-hidden>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i}>★</span>
+                  ))}
                 </div>
-                <div>
-                  <p className="text-sm font-medium">{t.name}</p>
-                  <p className="text-xs text-neutral-500">{t.city}</p>
-                </div>
-              </figcaption>
-            </figure>
-          ))}
+                <blockquote className="mt-4 font-serif text-lg italic leading-relaxed text-neutral-200">
+                  “{t.body}”
+                </blockquote>
+                <figcaption className="mt-5 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--gold)]/50 font-serif text-sm text-[var(--gold)]">
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <p className="font-serif text-sm text-white">{t.name}</p>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-[var(--gold-soft)]">
+                      {t.location}
+                    </p>
+                  </div>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* FOR VENDORS CTA */}
-      <section className="mx-auto max-w-5xl px-4 pb-20">
-        <div className="overflow-hidden rounded-2xl bg-neutral-900 text-white">
-          <div className="grid items-center gap-6 p-8 sm:grid-cols-2 sm:p-12">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-pink-300">
-                For wedding vendors
-              </p>
-              <h3 className="mt-2 font-serif text-3xl font-semibold">
-                Get hot leads from couples ready to book
-              </h3>
-              <p className="mt-3 text-white/80">
-                Pay only for the introductions that matter. Lead-grade
-                quality controls and fair rotation keep your inbox full of
-                qualified couples.
-              </p>
-              <div className="mt-5 flex gap-3">
-                <Link
-                  href="/vendor/register"
-                  className="rounded-full bg-pink-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-pink-700"
-                >
-                  Get a free listing
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="rounded-full border border-white/30 px-5 py-2.5 text-sm font-medium text-white hover:border-white"
-                >
-                  See pricing
-                </Link>
-              </div>
-            </div>
-            <div className="hidden sm:block">
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <Metric n="R3000" label="Avg basket per couple" />
-                <Metric n="5–9" label="Leads per couple" />
-                <Metric n="75%" label="Gross margin" />
-              </div>
+      {/* CTA STRIP */}
+      <section className="bg-[var(--background)] py-24">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <div className="surface rounded-3xl px-8 py-14">
+            <p className="eyebrow">Are you a vendor?</p>
+            <h2 className="mt-3 font-serif text-4xl font-medium text-white sm:text-5xl">
+              Get hot leads from couples ready to book.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm text-neutral-400">
+              Free listing, lead-grade quality control, fair rotation. Pay
+              only for the introductions that matter.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/vendor/register"
+                className="rounded-full bg-[var(--gold)] px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-black hover:bg-[var(--gold-soft)]"
+              >
+                Get a free listing
+              </Link>
+              <Link
+                href="/pricing"
+                className="rounded-full border border-[var(--gold)]/60 px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[var(--gold)] hover:bg-[var(--gold)]/10"
+              >
+                See pricing →
+              </Link>
             </div>
           </div>
         </div>
@@ -240,31 +285,8 @@ export default function Home() {
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <p className="font-serif text-2xl font-bold text-pink-700">{value}</p>
-      <p className="mt-1 text-xs uppercase tracking-wide text-neutral-500">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function Step({ n, title, body }: { n: string; title: string; body: string }) {
-  return (
-    <div className="rounded-2xl bg-white p-6 shadow-sm">
-      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-600 font-serif text-lg font-bold text-white">
-        {n}
-      </span>
-      <h3 className="mt-3 font-serif text-xl font-semibold">{title}</h3>
-      <p className="mt-2 text-sm text-neutral-600">{body}</p>
-    </div>
-  );
-}
-
-function Metric({ n, label }: { n: string; label: string }) {
-  return (
-    <div className="rounded-xl bg-white/5 p-3 backdrop-blur">
-      <p className="font-serif text-xl font-bold text-pink-300">{n}</p>
-      <p className="mt-1 text-[10px] uppercase tracking-wide text-white/70">
+      <p className="font-serif text-3xl text-white">{value}</p>
+      <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[var(--gold-soft)]">
         {label}
       </p>
     </div>
