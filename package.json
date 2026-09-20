@@ -14,6 +14,8 @@
     "deploy:vercel": "bash scripts/deploy-vercel.sh"
   },
   "dependencies": {
+    "@neon/config": "^1.7.2",
+    "@neon/env": "^1.4.3",
     "@prisma/client": "^6",
     "next": "16.3.5",
     "next-auth": "^5.0.0-beta.32",
