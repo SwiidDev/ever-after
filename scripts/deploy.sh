@@ -10,15 +10,19 @@ NAME=${NAME:-ever-after}
 VISIBILITY=${VISIBILITY:-private}
 PROD_FLAG="--prod"
 
-echo "● 1/5  Push to GitHub"
-if [ -n "$GH_TOKEN" ] || gh auth status >/dev/null 2>&1; then
+echo "● 1/5  Push to GitHub (or use existing)"
+if [ -n "$REPO" ]; then
+  echo "   using existing REPO=$REPO"
+elif [ -n "$GH_TOKEN" ] || gh auth status >/dev/null 2>&1; then
   GH_TOKEN="$GH_TOKEN" bash scripts/push-github.sh
   OWNER=$( ( [ -n "$GH_TOKEN" ] && curl -sS -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/user | grep '"login"' | head -1 | sed -E 's/.*"login": *"?([^"]+)"?.*/\1/' ) \
         || gh api user --jq .login )
+  REPO="https://github.com/$OWNER/$NAME"
 else
-  OWNER=$GITHUB_OWNER
+  # Skip push: repo already exists at REPO (e.g. user pushed manually)
+  REPO=$GITHUB_OWNER/$NAME
+  [ -z "$REPO" ] && { echo "Set REPO=git@github.com:OWNER/$NAME.git or GH_TOKEN to push"; exit 1; }
 fi
-REPO="https://github.com/$OWNER/$NAME"
 echo "   → $REPO"
 
 echo "● 2/5  Apply Prisma schema to Neon"
