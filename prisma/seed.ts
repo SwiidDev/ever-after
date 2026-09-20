@@ -53,6 +53,20 @@ async function main() {
     });
   }
   console.log(`Seeded ${vendors.length} vendors.`);
+
+  const bundles = [
+    ["Starter", 15, 45000],
+    ["Growth", 50, 135000],
+    ["Pro", 150, 360000],
+  ] as const;
+  for (const [name, credits, priceCents] of bundles) {
+    await prisma.creditBundle.upsert({
+      where: { id: `bundle-${name.toLowerCase()}` },
+      update: { credits, priceCents },
+      create: { id: `bundle-${name.toLowerCase()}`, name, credits, priceCents },
+    });
+  }
+  console.log("Seeded credit bundles.");
 }
 
 main()

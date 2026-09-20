@@ -50,6 +50,9 @@ model Vendor {
   createdAt      DateTime     @default(now())
   serviceRegions ServiceRegion[]
   reviews        Review[]
+  leadSlots      LeadSlot[]
+  leadUnlocks    LeadUnlock[]
+  ledgerEntries  LedgerEntry[]
 }
 
 model ServiceRegion {
@@ -82,4 +85,100 @@ model Review {
   rating    Int
   comment   String?
   createdAt DateTime @default(now())
+}
+
+// ---- Lead engine ----
+
+enum LeadStatus {
+  DISTRIBUTED
+  EXHAUSTED
+  CLOSED
+}
+
+model Lead {
+  id            String     @id @default(cuid())
+  category      String
+  eventDate     DateTime?
+  region        String
+  budgetBand    String
+  guestCount    Int?
+  contactName   String
+  contactEmail  String
+  contactPhone  String
+  notes         String?
+  status        LeadStatus @default(DISTRIBUTED)
+  maxSlots      Int        @default(5)
+  createdAt     DateTime   @default(now())
+  slots         LeadSlot[]
+  unlocks       LeadUnlock[]
+}
+
+model LeadSlot {
+  id        String    @id @default(cuid())
+  leadId    String
+  lead      Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  vendorId  String
+  vendor    Vendor    @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  position  Int
+  notified  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  @@unique([leadId, vendorId])
+}
+
+model LeadUnlock {
+  id            String       @id @default(cuid())
+  leadId        String
+  lead          Lead         @relation(fields: [leadId], references: [id])
+  vendorId      String
+  vendor        Vendor       @relation(fields: [vendorId], references: [id])
+  ledgerEntryId String       @unique
+  createdAt     DateTime     @default(now())
+
+  @@unique([leadId, vendorId])
+}
+
+// ---- Billing ----
+
+enum LedgerType {
+  PURCHASE
+  BONUS
+  UNLOCK
+  REFUND
+  ADMIN_ADJUSTMENT
+  EXPIRY
+}
+
+model LedgerEntry {
+  id             String     @id @default(cuid())
+  vendorId       String
+  vendor         Vendor     @relation(fields: [vendorId], references: [id])
+  type           LedgerType
+  deltaCredits   Int
+  balanceAfter   Int
+  idempotencyKey String     @unique
+  refId          String?
+  note           String?
+  createdAt      DateTime   @default(now())
+
+  @@index([vendorId, createdAt])
+}
+
+model CreditBundle {
+  id         String  @id @default(cuid())
+  name       String
+  credits    Int
+  priceCents Int
+  active     Boolean @default(true)
+}
+
+model Payment {
+  id             String   @id @default(cuid())
+  vendorId       String
+  bundleId       String?
+  amountCents    Int
+  status         String   @default("PENDING") // PENDING/COMPLETE/CANCELLED/FAILED
+  pfPaymentId    String?  @unique
+  creditsGranted Int      @default(0)
+  createdAt      DateTime @default(now())
 }
