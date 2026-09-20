@@ -1,4 +1,5 @@
 import Link from "next/link";
+import "./globals.css";
 import { BRAND } from "@/lib/brand";
 import { getSession } from "@/lib/session";
 import SignOutButton from "@/app/components/sign-out";
