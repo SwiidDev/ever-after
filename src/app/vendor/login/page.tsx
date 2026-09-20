@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -22,13 +21,6 @@ export default async function VendorLoginPage({
       include: { vendor: true },
     });
     if (!user?.vendor) return;
-    const jar = await cookies();
-    jar.set("weddo_vendor", user.vendor.id, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
     const { setSession } = await import("@/lib/session");
     await setSession({
       uid: user.id,

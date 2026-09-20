@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -38,13 +37,6 @@ export default async function LoginPage({
         })),
       });
     }
-    const jar = await cookies();
-    jar.set("weddo_couple", couple.id, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30,
-    });
     const { setSession } = await import("@/lib/session");
     await setSession({
       uid: user.id,

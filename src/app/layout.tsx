@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/brand";
+import { getSession } from "@/lib/session";
+import SignOutButton from "@/app/components/sign-out";
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const session = await getSession();
   return (
     <html lang="en" className="h-full antialiased">
       <body className="flex min-h-full flex-col bg-white text-neutral-900">
@@ -24,18 +27,34 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/vendor/register" className="hover:text-pink-600">
                 Free Business Listing
               </Link>
-              <Link
-                href="/admin"
-                className="rounded-full bg-pink-600 px-4 py-1.5 font-medium text-white hover:bg-pink-700"
-              >
-                Admin
+              {session?.role === "ADMIN" && (
+                <Link href="/admin" className="rounded-full bg-pink-600 px-4 py-1.5 font-medium text-white hover:bg-pink-700">
+                  Admin
+                </Link>
+              )}
+              {session ? (
+                <SignOutButton />
+              ) : (
+                <Link href="/login" className="text-neutral-500 hover:text-pink-600">
+                  Sign in
+                </Link>
+              )}
+              <Link href="/privacy" className="hidden text-neutral-400 hover:text-pink-600 sm:inline">
+                Privacy
               </Link>
             </nav>
           </div>
         </header>
         <main className="flex-1">{children}</main>
         <footer className="border-t border-neutral-200 py-6 text-center text-sm text-neutral-500">
-          © {new Date().getFullYear()} {BRAND.name} — {BRAND.tagline}
+          © {new Date().getFullYear()} {BRAND.name} — {BRAND.tagline} ·{" "}
+          <Link href="/privacy" className="hover:text-pink-600">
+            Privacy
+          </Link>{" "}
+          ·{" "}
+          <Link href="/terms" className="hover:text-pink-600">
+            Terms
+          </Link>
         </footer>
       </body>
     </html>

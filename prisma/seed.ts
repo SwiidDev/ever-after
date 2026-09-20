@@ -67,6 +67,14 @@ async function main() {
     });
   }
   console.log("Seeded credit bundles.");
+
+  // Admin account
+  await prisma.user.upsert({
+    where: { email: "admin@everafter.co.za" },
+    update: {},
+    create: { email: "admin@everafter.co.za", role: "ADMIN" },
+  });
+  console.log("Seeded admin (admin@everafter.co.za).");
 }
 
 main()
