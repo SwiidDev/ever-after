@@ -3,8 +3,8 @@
  * this file only.
  */
 export const BRAND = {
-  name: "Wed Do",
+  name: "Ever After",
   tagline: "Find wedding professionals in South Africa",
-  domain: "weddo.co.za",
-  email: "hello@weddo.co.za",
+  domain: "everafter.co.za",
+  email: "hello@everafter.co.za",
 } as const;

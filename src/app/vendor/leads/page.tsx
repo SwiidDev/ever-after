@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { getSession } from "@lib/session";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { unlockLead, unlockCost, grantCredits } from "@/lib/credits";
@@ -10,9 +10,9 @@ export default async function VendorLeadsPage({
 }: {
   searchParams: Promise<{ msg?: string }>;
 }) {
-  const jar = await cookies();
-  const vendorId = jar.get("weddo_vendor")?.value;
-  if (!vendorId) {
+  const session = await getSession();
+  const vendorId = session?.vendorId;
+  if (!vendorId || session?.role !== "VENDOR") {
     return (
       <div className="mx-auto max-w-md px-4 py-16 text-center">
         <p className="mb-4 text-neutral-600">Please sign in as a vendor.</p>
@@ -45,8 +45,8 @@ export default async function VendorLeadsPage({
   async function doUnlock(formData: FormData) {
     "use server";
     const leadId = String(formData.get("leadId"));
-    const jar2 = await cookies();
-    const vid = jar2.get("weddo_vendor")?.value;
+    const sess = await getSession();
+    const vid = sess?.vendorId;
     if (!vid) return;
     const result = await unlockLead({
       vendorId: vid,
@@ -84,8 +84,8 @@ export default async function VendorLeadsPage({
   async function buyBundle(formData: FormData) {
     "use server";
     const bundleId = String(formData.get("bundleId"));
-    const jar2 = await cookies();
-    const vid = jar2.get("weddo_vendor")?.value;
+    const sess = await getSession();
+    const vid = sess?.vendorId;
     if (!vid) return;
     const bundle = await prisma.creditBundle.findUnique({ where: { id: bundleId } });
     if (!bundle) return;

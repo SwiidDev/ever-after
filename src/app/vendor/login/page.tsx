@@ -29,6 +29,13 @@ export default async function VendorLoginPage({
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
+    const { setSession } = await import("@/lib/session");
+    await setSession({
+      uid: user.id,
+      email: user.email,
+      role: "VENDOR",
+      vendorId: user.vendor.id,
+    });
     const { redirect } = await import("next/navigation");
     redirect("/vendor/leads");
   }

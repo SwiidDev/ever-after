@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
@@ -22,8 +22,8 @@ export default async function VendorPage({
 
   // Does the signed-in couple qualify to review (they own a lead this
   // vendor unlocked)?
-  const jar = await cookies();
-  const coupleId = jar.get("weddo_couple")?.value;
+  const session = await getSession();
+  const coupleId = session?.coupleId;
   let canReview = false;
   let qualifyingLeadId: string | null = null;
   if (coupleId) {
@@ -49,8 +49,8 @@ export default async function VendorPage({
     const { prisma } = await import("@/lib/prisma");
     const { cookies } = await import("next/headers");
     const { redirect } = await import("next/navigation");
-    const jar = await cookies();
-    const coupleId = jar.get("weddo_couple")?.value;
+    const session = await getSession();
+    const coupleId = session?.coupleId;
     const slug = String(formData.get("slug"));
     const leadId = String(formData.get("leadId"));
     const rating = Number(formData.get("rating"));

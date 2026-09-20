@@ -45,6 +45,13 @@ export default async function LoginPage({
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
     });
+    const { setSession } = await import("@/lib/session");
+    await setSession({
+      uid: user.id,
+      email: user.email,
+      role: user.role,
+      coupleId: couple.id,
+    });
     const { redirect } = await import("next/navigation");
     redirect("/dashboard");
   }

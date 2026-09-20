@@ -1,10 +1,10 @@
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 
 export async function getCouple() {
-  const jar = await cookies();
-  const coupleId = jar.get("weddo_couple")?.value;
+  const session = await getSession();
+  const coupleId = session?.coupleId;
   if (!coupleId) redirect("/login");
   const couple = await prisma.couple.findUnique({
     where: { id: coupleId },

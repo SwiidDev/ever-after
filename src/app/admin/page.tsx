@@ -1,9 +1,24 @@
 import Link from "next/link";
+import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
+  const session = await getSession();
+  if (session?.role !== "ADMIN") {
+    return (
+      <div className="mx-auto max-w-md px-4 py-16 text-center">
+        <p className="text-neutral-600">
+          Admin access only. Sign in with an admin account via{" "}
+          <a href="/login" className="text-pink-600 underline">
+            /login
+          </a>
+          .
+        </p>
+      </div>
+    );
+  }
   const pending = await prisma.vendor.findMany({
     where: { status: "PENDING" },
   });

@@ -50,10 +50,7 @@ export default async function RequestQuotePage({
         contactPhone,
         notes,
         // attach to the logged-in couple (if any) so messaging works later
-        coupleId: await (async () => {
-          const { cookies } = await import("next/headers");
-          return (await cookies()).get("weddo_couple")?.value ?? null;
-        })(),
+        coupleId: (await (await import("@/lib/session")).getSession())?.coupleId ?? null,
       },
     });
 

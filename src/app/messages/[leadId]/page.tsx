@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { notify, deliverQueued } from "@/lib/notify";
@@ -11,9 +11,9 @@ export default async function ThreadPage({
   params: Promise<{ leadId: string }>;
 }) {
   const { leadId } = await params;
-  const jar = await cookies();
-  const vendorId = jar.get("weddo_vendor")?.value;
-  const coupleId = jar.get("weddo_couple")?.value;
+  const session = await getSession();
+  const vendorId = session?.vendorId;
+  const coupleId = session?.coupleId;
   const role = vendorId ? "VENDOR" : coupleId ? "COUPLE" : null;
   if (!role) redirect("/login");
 
@@ -56,9 +56,9 @@ export default async function ThreadPage({
     const { notify, deliverQueued } = await import("@/lib/notify");
     const { cookies } = await import("next/headers");
     const { redirect } = await import("next/navigation");
-    const jar = await cookies();
-    const vendorId = jar.get("weddo_vendor")?.value;
-    const coupleId = jar.get("weddo_couple")?.value;
+    const session = await getSession();
+    const vendorId = session?.vendorId;
+    const coupleId = session?.coupleId;
     const role = vendorId ? "VENDOR" : coupleId ? "COUPLE" : null;
     if (!role) return;
     const leadId = String(formData.get("leadId"));
